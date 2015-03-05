@@ -6,12 +6,15 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
 
 public class Login extends JFrame {
 
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private JTextField txtName;
 
 	/**
 	 * Launch the application.
@@ -33,12 +36,24 @@ public class Login extends JFrame {
 	 * Create the frame.
 	 */
 	public Login() {
+		setResizable(false);
+		setTitle("Login");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setSize(250,300);
+		setLocationRelativeTo(null);
+		//setBounds(100, 100, 250, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		txtName = new JTextField();
+		txtName.setBounds(45, 39, 160, 28);
+		contentPane.add(txtName);
+		txtName.setColumns(10);
+		
+		JLabel lblName = new JLabel("Name:");
+		lblName.setBounds(49, 11, 51, 28);
+		contentPane.add(lblName);
 	}
-
 }
