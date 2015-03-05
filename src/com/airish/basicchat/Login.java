@@ -11,6 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Login extends JFrame {
 
@@ -90,7 +92,20 @@ public class Login extends JFrame {
 		contentPane.add(lblPort);
 		
 		JButton btnLogin = new JButton("Login");
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String name = txtName.getText();
+				String address = txtAddress.getText();
+				int port = Integer.parseInt(txtPort.getText());
+				login(name, address, port);
+			}
+		});
 		btnLogin.setBounds(66, 213, 117, 29);
 		contentPane.add(btnLogin);
+	}
+
+	private void login(String name, String address, int port) {
+		dispose(); // Close login window
+		System.out.println(name+" "+address+" "+port);
 	}
 }
