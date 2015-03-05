@@ -8,6 +8,9 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class Login extends JFrame {
 
@@ -15,6 +18,10 @@ public class Login extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtName;
+	private JTextField txtAddress;
+	private JLabel lblIpAddress;
+	private JTextField txtPort;
+	private JLabel lblPort;
 
 	/**
 	 * Launch the application.
@@ -36,6 +43,14 @@ public class Login extends JFrame {
 	 * Create the frame.
 	 */
 	public Login() {
+		
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
 		setResizable(false);
 		setTitle("Login");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,5 +70,27 @@ public class Login extends JFrame {
 		JLabel lblName = new JLabel("Name:");
 		lblName.setBounds(49, 11, 51, 28);
 		contentPane.add(lblName);
+		
+		txtAddress = new JTextField();
+		txtAddress.setBounds(45, 95, 160, 28);
+		contentPane.add(txtAddress);
+		txtAddress.setColumns(10);
+		
+		lblIpAddress = new JLabel("IP Address:");
+		lblIpAddress.setBounds(49, 79, 96, 16);
+		contentPane.add(lblIpAddress);
+		
+		txtPort = new JTextField();
+		txtPort.setBounds(45, 155, 160, 28);
+		contentPane.add(txtPort);
+		txtPort.setColumns(10);
+		
+		lblPort = new JLabel("Port:");
+		lblPort.setBounds(49, 135, 61, 22);
+		contentPane.add(lblPort);
+		
+		JButton btnLogin = new JButton("Login");
+		btnLogin.setBounds(66, 213, 117, 29);
+		contentPane.add(btnLogin);
 	}
 }
