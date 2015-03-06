@@ -1,8 +1,6 @@
 package com.airish.basicchat;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -10,7 +8,6 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -106,6 +103,6 @@ public class Login extends JFrame {
 
 	private void login(String name, String address, int port) {
 		dispose(); // Close login window
-		System.out.println(name+" "+address+" "+port);
+		new Client(name, address, port);
 	}
 }
