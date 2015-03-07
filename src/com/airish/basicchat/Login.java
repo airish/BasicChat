@@ -10,6 +10,8 @@ import javax.swing.JButton;
 import javax.swing.UIManager;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Login extends JFrame {
 
@@ -89,6 +91,18 @@ public class Login extends JFrame {
 		contentPane.add(lblPort);
 		
 		JButton btnLogin = new JButton("Login");
+		btnLogin.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER){
+					String name = txtName.getText();
+					String address = txtAddress.getText();
+					int port = Integer.parseInt(txtPort.getText());
+					login(name, address, port);
+				}
+			}
+		});
+		
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String name = txtName.getText();

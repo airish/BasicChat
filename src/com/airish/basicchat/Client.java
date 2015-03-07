@@ -14,6 +14,8 @@ import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Client extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -22,7 +24,7 @@ public class Client extends JFrame {
 	private String name, address;
 	private int port;
 	private JTextField txtMessage;
-
+	private JTextArea txtrHistory;
 
 	/**
 	 * Create the frame.
@@ -33,6 +35,8 @@ public class Client extends JFrame {
 		this.address = address;
 		this.port = port;
 		createWindow();
+		sendMessage(name+" Connecting to "+address+":"+port);
+		sendMessage(name+" Disconnecting");
 	}
 	
 	private void createWindow(){
@@ -50,7 +54,7 @@ public class Client extends JFrame {
 		gbl_contentPane.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
-		JTextArea txtrHistory = new JTextArea();
+		txtrHistory = new JTextArea();
 		txtrHistory.setEditable(false);
 		GridBagConstraints gbc_txtrHistory = new GridBagConstraints();
 		gbc_txtrHistory.insets = new Insets(0, 0, 5, 5);
@@ -63,12 +67,27 @@ public class Client extends JFrame {
 		
 		// Create the send button.
 		JButton btnSend = new JButton("Send");
+		
+		// Send text message to console when send button is hit
 		btnSend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				sendMessage();
 			}
 		});
 		
+		
 		txtMessage = new JTextField();
+		// Send message to console when enter key is pressed
+		txtMessage.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER){
+					sendMessage();
+				}
+			}
+		});
+		
+		
 		GridBagConstraints gbc_txtMessage = new GridBagConstraints();
 		gbc_txtMessage.insets = new Insets(0, 0, 0, 5);
 		gbc_txtMessage.fill = GridBagConstraints.HORIZONTAL;
@@ -83,9 +102,21 @@ public class Client extends JFrame {
 		gbc_btnSend.gridy = 2;
 		contentPane.add(btnSend, gbc_btnSend);
 		
-		requestFocus();
-		txtMessage.requestFocus();
 		setVisible(true);
-	}
+		txtMessage.requestFocusInWindow();
 
+	}
+	
+	public void sendMessage(String...strings){
+		if(strings.length == 0){
+			String message = txtMessage.getText();
+			if(!message.equals(""))
+				txtrHistory.append(name+": "+message+"\n");
+			txtMessage.setText("");
+		}
+		else for(String s : strings)
+			txtrHistory.append(s+"\n");
+		
+		txtMessage.requestFocusInWindow();
+	}
 }
