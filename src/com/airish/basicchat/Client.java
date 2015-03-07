@@ -1,7 +1,5 @@
 package com.airish.basicchat;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -25,6 +23,9 @@ import javax.swing.JTextField;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class Client extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -35,6 +36,9 @@ public class Client extends JFrame {
 	private JTextField txtMessage;
 	private JTextArea txtrHistory;
 	private DefaultCaret caret;
+	
+	private Socket socket; 
+	private InetAddress ip;
 
 	/**
 	 * Create the frame.
@@ -44,9 +48,24 @@ public class Client extends JFrame {
 		this.name = name;
 		this.address = address;
 		this.port = port;
+		boolean connected = openConnection(address, port);
 		createWindow();
-		sendMessage(name+" Connecting to "+address+":"+port);
-		sendMessage(name+" Disconnecting");
+		if(connected)
+			sendMessage(name+" Connecting to "+address+":"+port);
+		else {
+			sendMessage(name+" : Connection Failed!");
+			System.out.println("Connection failure");
+		}
+	}
+	
+	private boolean openConnection(String address, int port){
+		try {
+			socket = new Socket();
+			ip = InetAddress.getByName(address);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return true;
 	}
 	
 	private void createWindow(){
@@ -77,9 +96,10 @@ public class Client extends JFrame {
 		scrollConstraints.insets = new Insets(0, 0, 5, 5);
 		scrollConstraints.fill = GridBagConstraints.BOTH;
 		// Correspond to column and row widths/heights
-		scrollConstraints.gridx = 1;
-		scrollConstraints.gridy = 1;
-		scrollConstraints.gridwidth = 2;
+		scrollConstraints.gridx = 0;
+		scrollConstraints.gridy = 0;
+		scrollConstraints.gridwidth = 3;
+		scrollConstraints.gridheight = 2;
 		contentPane.add(scroll, scrollConstraints);
 		
 		// Create the send button.
@@ -108,8 +128,9 @@ public class Client extends JFrame {
 		GridBagConstraints gbc_txtMessage = new GridBagConstraints();
 		gbc_txtMessage.insets = new Insets(0, 0, 0, 5);
 		gbc_txtMessage.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtMessage.gridx = 1;
+		gbc_txtMessage.gridx = 0;
 		gbc_txtMessage.gridy = 2;
+		gbc_txtMessage.gridwidth = 2;
 		contentPane.add(txtMessage, gbc_txtMessage);
 		txtMessage.setColumns(10);
 		
