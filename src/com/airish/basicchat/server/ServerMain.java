@@ -1,11 +1,12 @@
-package com.airish.basicchat;
+package com.airish.basicchat.server;
 
 public class ServerMain {
-	int port;
+	private int port;
+	private Server server;
 	
 	public ServerMain(int port){
 		this.port = port;
-		System.out.println("Port: "+port);
+		server = new Server(port);
 	}
 	
 	public static void main(String...args){
