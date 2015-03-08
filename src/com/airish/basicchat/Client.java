@@ -58,9 +58,9 @@ public class Client extends JFrame {
 		boolean connected = openConnection(address, port);
 		createWindow();
 		if(connected)
-			sendMessage(name+" Connecting to "+address+":"+port);
+			displayMessage(name+" Connecting to "+address+":"+port);
 		else {
-			sendMessage(name+" : Connection Failed!");
+			displayMessage(name+" : Connection Failed!");
 			System.out.println("Connection failure");
 		}
 	}
@@ -148,7 +148,7 @@ public class Client extends JFrame {
 		// Send text message to console when send button is hit
 		btnSend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				sendMessage();
+				displayMessage();
 			}
 		});
 		
@@ -159,7 +159,7 @@ public class Client extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER){
-					sendMessage();
+					displayMessage();
 				}
 			}
 		});
@@ -186,14 +186,13 @@ public class Client extends JFrame {
 	}
 	
 	/**
-	 *  Sends a message to the textArea of the client window.
+	 *  Displays a message on the textArea of the client window.
 	 *  If no strings are passed to the method, then text will be sent
 	 *  from the User's textField. This generalized function can be used by
 	 *  either the User or the program itself.
 	 * @param strings
 	 */
-	
-	public void sendMessage(String...strings){
+	public void displayMessage(String...strings){
 		if(strings.length == 0){
 			String message = txtMessage.getText();
 			if(message.equals("")) return;
