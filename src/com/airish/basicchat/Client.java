@@ -23,8 +23,11 @@ import javax.swing.JTextField;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.InetAddress;
-import java.net.Socket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 public class Client extends JFrame {
@@ -37,7 +40,7 @@ public class Client extends JFrame {
 	private JTextArea txtrHistory;
 	private DefaultCaret caret;
 	
-	private Socket socket; 
+	private DatagramSocket socket; 
 	private InetAddress ip;
 
 	/**
@@ -48,6 +51,8 @@ public class Client extends JFrame {
 		this.name = name;
 		this.address = address;
 		this.port = port;
+		
+		// Connect to network
 		boolean connected = openConnection(address, port);
 		createWindow();
 		if(connected)
@@ -58,14 +63,31 @@ public class Client extends JFrame {
 		}
 	}
 	
+	// Open a connection to the socket using given address and port
 	private boolean openConnection(String address, int port){
 		try {
-			socket = new Socket();
+			socket = new DatagramSocket(port);
 			ip = InetAddress.getByName(address);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
+			return false;
+		} catch (SocketException e) {
+			e.printStackTrace();
+			return false;
 		}
 		return true;
+	}
+	
+	// Receives a packet of data from network, returns it as String message
+	private String receive(){
+		byte[] data = new byte[1024];
+		DatagramPacket packet = new DatagramPacket(data, data.length);
+		try {
+			socket.receive(packet);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new String(packet.getData());
 	}
 	
 	private void createWindow(){
