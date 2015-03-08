@@ -42,6 +42,8 @@ public class Client extends JFrame {
 	
 	private DatagramSocket socket; 
 	private InetAddress ip;
+	
+	private Thread send;
 
 	/**
 	 * Create the frame.
@@ -88,6 +90,22 @@ public class Client extends JFrame {
 			e.printStackTrace();
 		}
 		return new String(packet.getData());
+	}
+	
+	// Send message to network as datagram packet from given array of bytes
+	private void send(final byte[] data){
+		send = new Thread("Send") {
+			public void run() {
+				DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
+				try {
+					socket.send(packet);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		
+		send.start();
 	}
 	
 	private void createWindow(){
