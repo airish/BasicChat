@@ -20,5 +20,4 @@ public class ServerMain {
 		new ServerMain(port);
 	}
 	
-	
 }

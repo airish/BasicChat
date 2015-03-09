@@ -55,20 +55,22 @@ public class Client extends JFrame {
 		this.port = port;
 		
 		// Connect to network
-		boolean connected = openConnection(address, port);
+		boolean connected = openConnection(address);
 		createWindow();
-		if(connected)
+		if(connected){
 			displayMessage(name+" Connecting to "+address+":"+port);
-		else {
+			String connection = name+" connected from "+address+" : "+port;
+			send(connection.getBytes());
+		}else {
 			displayMessage(name+" : Connection Failed!");
 			System.out.println("Connection failure");
 		}
 	}
 	
 	// Open a connection to the socket using given address and port
-	private boolean openConnection(String address, int port){
+	private boolean openConnection(String address){
 		try {
-			socket = new DatagramSocket(port);
+			socket = new DatagramSocket();
 			ip = InetAddress.getByName(address);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -196,14 +198,18 @@ public class Client extends JFrame {
 		if(strings.length == 0){
 			String message = txtMessage.getText();
 			if(message.equals("")) return;
-				
-			txtrHistory.append(name+": "+message+"\n");
+			
+			message = name+": "+message;
+			txtrHistory.append(message+"\n");
+			send(message.getBytes());
 			txtMessage.setText("");
+			txtMessage.requestFocusInWindow();
 		}
-		else for(String s : strings)
-			txtrHistory.append(s+"\n");
-		
+		else {
+			for(String s : strings){
+				txtrHistory.append(s+"\n");
+			}
+		}
 		txtrHistory.setCaretPosition(txtrHistory.getDocument().getLength());
-		txtMessage.requestFocusInWindow();
 	}
 }
