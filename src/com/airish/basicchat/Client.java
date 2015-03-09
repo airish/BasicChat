@@ -60,7 +60,7 @@ public class Client extends JFrame {
 		createWindow();
 		if(connected){
 			displayMessage(name+" Connecting to "+address+":"+port);
-			String connection = name+" connected from "+address+" : "+port;
+			String connection = "/c/"+name;
 			send(connection.getBytes());
 		}else {
 			displayMessage(name+" : Connection Failed!");

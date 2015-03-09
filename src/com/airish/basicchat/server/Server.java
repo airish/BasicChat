@@ -63,14 +63,25 @@ public class Server implements Runnable{
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+					processPacket(packet);
 				
 					users.add(new User("Name", packet.getAddress(),packet.getPort(), 50));
 					System.out.println(users.get(0).address().toString()
 							+users.get(0).port());
-					System.out.println(new String(packet.getData()));
 				}	
 			}
 		};
 		receive.start();
+	}
+	
+	public void processPacket(DatagramPacket packet){
+		String packetData = new String(packet.getData());
+		if(packetData.startsWith("/c/")){ // Connection packet
+			users.add(new User(packetData.substring(3,packetData.length()), 
+					packet.getAddress(),
+					packet.getPort(), 50));
+		} else {
+			System.out.println(packetData);
+		}
 	}
 }
