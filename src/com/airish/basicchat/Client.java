@@ -36,6 +36,7 @@ public class Client extends JFrame {
 	
 	private String name, address;
 	private int port;
+	
 	private JTextField txtMessage;
 	private JTextArea txtrHistory;
 	private DefaultCaret caret;

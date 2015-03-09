@@ -4,10 +4,14 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
 // TODO convert to TCP, use server authentication
 public class Server implements Runnable{
 	
+	
+	private List<User> users = new ArrayList<User>();
 	private DatagramSocket socket;
 	private int port;
 	private boolean running = false;
@@ -59,6 +63,10 @@ public class Server implements Runnable{
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+				
+					users.add(new User("Name", packet.getAddress(),packet.getPort(), 50));
+					System.out.println(users.get(0).address().toString()
+							+users.get(0).port());
 					System.out.println(new String(packet.getData()));
 				}	
 			}
