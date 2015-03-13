@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 // TODO convert to TCP, use server authentication
 public class Server implements Runnable{
@@ -65,7 +68,12 @@ public class Server implements Runnable{
 					}
 					processPacket(packet);
 				
-					users.add(new User("Name", packet.getAddress(),packet.getPort(), 50));
+					users.add(new User("Name", 
+							packet.getAddress(),
+							packet.getPort(), 
+							50)
+					);
+					
 					System.out.println(users.get(0).address().toString()
 							+users.get(0).port());
 				}	
@@ -77,9 +85,13 @@ public class Server implements Runnable{
 	public void processPacket(DatagramPacket packet){
 		String packetData = new String(packet.getData());
 		if(packetData.startsWith("/c/")){ // Connection packet
+			//UUID id = UUID.randomUUID();
+			int id = UniqueIdentifier.getIdentifier();
 			users.add(new User(packetData.substring(3,packetData.length()), 
-					packet.getAddress(),
-					packet.getPort(), 50));
+						packet.getAddress(),
+						packet.getPort(), 
+						id)
+			);
 		} else {
 			System.out.println(packetData);
 		}
