@@ -3,6 +3,7 @@ package com.airish.basicchat.server;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -82,6 +83,30 @@ public class Server implements Runnable{
 		receive.start();
 	}
 	
+	private void sendToAll(String message){
+		for(User u : users){
+			send(message.getBytes(), u.address(), u.port());
+		}
+	}
+	
+	private void send(final byte[] data,
+					  final InetAddress  address,
+					  final int port){
+		send = new Thread("Send"){
+			public void run(){
+				DatagramPacket packet = new
+						DatagramPacket(data, data.length,
+								address, port);				
+				try {
+					socket.send(packet);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		send.start();
+	}
+	
 	public void processPacket(DatagramPacket packet){
 		String packetData = new String(packet.getData());
 		if(packetData.startsWith("/c/")){ // Connection packet
@@ -92,6 +117,8 @@ public class Server implements Runnable{
 						packet.getPort(), 
 						id)
 			);
+		} else if(packetData.startsWith("/m/")){ // Message packet
+			sendToAll(packetData);
 		} else {
 			System.out.println(packetData);
 		}

@@ -202,7 +202,7 @@ public class Client extends JFrame {
 			
 			message = name+": "+message;
 			txtrHistory.append(message+"\n");
-			send(message.getBytes());
+			send(("/m/"+message).getBytes());
 			txtMessage.setText("");
 			txtMessage.requestFocusInWindow();
 		}
