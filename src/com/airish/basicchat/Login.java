@@ -1,17 +1,18 @@
 package com.airish.basicchat;
 
 import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import javax.swing.UIManager;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 
 public class Login extends JFrame {
 
@@ -117,6 +118,6 @@ public class Login extends JFrame {
 
 	private void login(String name, String address, int port) {
 		dispose(); // Close login window
-		new Client(name, address, port);
+		new ClientWindow(name, address, port);
 	}
 }

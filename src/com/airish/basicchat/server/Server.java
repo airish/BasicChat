@@ -119,6 +119,7 @@ public class Server implements Runnable{
 			);
 		} else if(packetData.startsWith("/m/")){ // Message packet
 			sendToAll(packetData);
+			System.out.print(packetData);
 		} else {
 			System.out.println(packetData);
 		}
