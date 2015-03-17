@@ -142,7 +142,7 @@ public class ClientWindow extends JFrame implements Runnable{
 			if(message.equals("")) return;
 			
 			message = client.name()+": "+message;
-			txtrHistory.append(message+"\n");
+		//	txtrHistory.append(message+"\n");
 			client.send(("/m/"+message).getBytes());
 			txtMessage.setText("");
 			txtMessage.requestFocusInWindow();
@@ -161,6 +161,7 @@ public class ClientWindow extends JFrame implements Runnable{
 			public void run(){
 				while(running){
 					String message = client.receive();
+					message = message.trim(); //
 					
 					// If a connection is establish, give the client an ID
 					if(message.startsWith("/c/")){
