@@ -161,7 +161,6 @@ public class ClientWindow extends JFrame implements Runnable{
 			public void run(){
 				while(running){
 					String message = client.receive();
-					message = message.trim(); //
 					
 					// If a connection is establish, give the client an ID
 					if(message.startsWith("/c/")){

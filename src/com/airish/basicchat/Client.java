@@ -56,7 +56,7 @@ public class Client  {
 		}
 		String message = new String(packet.getData());
 		
-		return message;
+		return message.trim();
 	}
 	
 	// Send message to network as datagram packet from given array of bytes

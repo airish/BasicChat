@@ -65,12 +65,6 @@ public class Server implements Runnable{
 						e.printStackTrace();
 					}
 					processPacket(packet);
-				
-					users.add(new User("Name", 
-							packet.getAddress(),
-							packet.getPort(), 
-							50)
-					);
 					
 					System.out.println(users.get(0).address().toString()
 							+users.get(0).port());
