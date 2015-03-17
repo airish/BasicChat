@@ -8,25 +8,19 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.text.DefaultCaret;
-
 public class Client  {	
 	private String name, address;
 	private int port;
+	private int ID = -1;
 	
-	private JPanel contentPane;
-	private JTextField txtMessage;
-	private JTextArea txtrHistory;
-	private DefaultCaret caret;
 	
 	private DatagramSocket socket; 
 	private InetAddress ip;
 	
 	private Thread send;
 
+	
+	
 	/**
 	 * Create the frame.
 	 */
@@ -60,7 +54,9 @@ public class Client  {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return new String(packet.getData());
+		String message = new String(packet.getData());
+		
+		return message;
 	}
 	
 	// Send message to network as datagram packet from given array of bytes
@@ -91,4 +87,11 @@ public class Client  {
 		return port;
 	}
 
+	public int ID(){
+		return ID;
+	}
+	
+	public void setID(int ID){
+		this.ID = ID;
+	}
 }

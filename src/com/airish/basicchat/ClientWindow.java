@@ -15,9 +15,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.DefaultCaret;
 
-public class ClientWindow extends JFrame {	
+public class ClientWindow extends JFrame implements Runnable{	
 	
 	private static final long serialVersionUID = 1L;
 
@@ -25,11 +24,12 @@ public class ClientWindow extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtMessage;
 	private JTextArea txtrHistory;
-	private DefaultCaret caret;
 	
+	private Thread listen, run;
 	private Client client;
 	
-	
+	private boolean running;
+		
 
 	public ClientWindow(String name, String address, int port) {
 		setTitle("Basic Chat Client");
@@ -45,7 +45,11 @@ public class ClientWindow extends JFrame {
 		}else {
 			displayMessage(name+" : Connection Failed!");
 			System.out.println("Connection failure");
-		}	
+		}
+		
+		run = new Thread(this, "Running");
+		running = true;
+		run.start();
 	}
 	
 	private void createWindow(){
@@ -149,5 +153,30 @@ public class ClientWindow extends JFrame {
 			}
 		}
 		txtrHistory.setCaretPosition(txtrHistory.getDocument().getLength());
+	}
+	
+	public void listen(){
+		
+		listen = new Thread(){
+			public void run(){
+				while(running){
+					String message = client.receive();
+					
+					// If a connection is establish, give the client an ID
+					if(message.startsWith("/c/")){
+						client.setID(Integer.parseInt(message.substring(3)));
+					} else if(message.startsWith("/m/")){
+						displayMessage(message.substring(3));
+					}
+
+				}
+			}
+		};
+		
+		listen.start();
+	}
+	
+	public void run(){
+		listen();
 	}
 }
