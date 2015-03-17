@@ -75,6 +75,10 @@ public class Client  {
 		send.start();
 	}
 	
+	public void close(){
+		socket.close();
+	}
+	
 	public String name(){
 		return name;
 	}

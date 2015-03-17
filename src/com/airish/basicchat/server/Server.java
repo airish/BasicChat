@@ -57,6 +57,7 @@ public class Server implements Runnable{
 		receive = new Thread("Receive"){
 			public void run(){
 				while(running){
+					System.out.println("Number of clients: "+users.size());
 					byte[] data = new byte[1024];
 					DatagramPacket packet = new DatagramPacket(data, data.length);
 					try {
@@ -65,9 +66,6 @@ public class Server implements Runnable{
 						e.printStackTrace();
 					}
 					processPacket(packet);
-					
-					System.out.println(users.get(0).address().toString()
-							+users.get(0).port());
 				}	
 			}
 		};
@@ -99,7 +97,8 @@ public class Server implements Runnable{
 	}
 	
 	public void processPacket(DatagramPacket packet){
-		String packetData = new String(packet.getData());
+		String packetData = new String(packet.getData()).trim();
+		System.out.println("Packet test: "+packetData);
 		if(packetData.startsWith("/c/")){ // Connection packet
 			int id = UniqueIdentifier.getIdentifier();
 			String name = packetData.substring(3,packetData.length());
@@ -115,8 +114,30 @@ public class Server implements Runnable{
 		} else if(packetData.startsWith("/m/")){ // Message packet
 			sendToAll(packetData);
 			System.out.println(packetData);
+		} else if(packetData.startsWith("/d/")){ // Disconnection packet
+			System.out.println("User disconnecting");
+			boolean status = packetData.substring(3,4).equals("t");
+			String id = packetData.substring(5);
+			disconnect(Integer.parseInt(id), status);
 		} else {
 			System.out.println(packetData);
+		}
+	}
+
+	
+	private void disconnect(int id, boolean status){
+		String name;
+		for(int i = 0; i < users.size(); i++){
+			if(users.get(i).ID() == id){
+				name = users.get(i).name();
+				users.remove(i);
+				if(status)
+					sendToAll("/m/"+name+" has logged out.");
+				else
+					sendToAll("/m/"+name+" has timed out.");
+
+				return;
+			}
 		}
 	}
 }

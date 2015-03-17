@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -124,9 +126,20 @@ public class ClientWindow extends JFrame implements Runnable{
 		gbc_btnSend.gridy = 2;
 		contentPane.add(btnSend, gbc_btnSend);
 		
+		// Listen for close button, and disconnect the user
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e){
+				System.out.println("Closing window, disconnecting client");
+				String disconnect = "/d/t/"+client.ID();
+				System.out.println(disconnect);
+				
+				client.send(disconnect.getBytes());
+				running = false;
+			}
+		});
+		
 		setVisible(true);
 		txtMessage.requestFocusInWindow();
-
 	}
 
 	/**
@@ -178,5 +191,8 @@ public class ClientWindow extends JFrame implements Runnable{
 	
 	public void run(){
 		listen();
+		if(!running){
+			client.close();
+		}
 	}
 }
