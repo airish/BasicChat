@@ -110,7 +110,7 @@ public class Server implements Runnable{
 			String m = "/c/" + id;
 			System.out.println(m);
 			send(m.getBytes(), packet.getAddress(), packet.getPort());
-			sendToAll(name+" has connected to the server.");
+			sendToAll("/m/"+name+" has connected to the server.");
 		} else if(packetData.startsWith("/m/")){ // Message packet
 			sendToAll(packetData);
 			System.out.println(packetData);

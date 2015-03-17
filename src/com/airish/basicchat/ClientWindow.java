@@ -41,7 +41,7 @@ public class ClientWindow extends JFrame implements Runnable{
 		boolean connected = client.openConnection(address);
 		createWindow();
 		if(connected){
-			displayMessage(name+" Connecting to "+address+":"+port);
+			displayMessage(name+" connecting to "+address+":"+port);
 			String connection = "/c/"+name;
 			client.send(connection.getBytes());
 		}else {
