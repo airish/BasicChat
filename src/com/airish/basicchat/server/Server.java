@@ -60,9 +60,11 @@ public class Server implements Runnable{
 					for(int i = 0; i < users.size(); i++){
 						User u = users.get(i);
 						if(!userResponses.contains(users.get(i).ID())){
-							u.incrementAttempts();
+							System.out.println("No response");
 							if(u.attempts() >= MAX_ATTEMPTS){
 								disconnect(u.ID(), false);
+							} else {
+								u.incrementAttempts();
 							}
 						} else {
 							userResponses.remove(new Integer(u.ID()));
@@ -149,16 +151,17 @@ public class Server implements Runnable{
 
 	
 	private void disconnect(int id, boolean status){
+		System.out.println("Disconnect "+id);
 		String name;
 		for(int i = 0; i < users.size(); i++){
 			if(users.get(i).ID() == id){
 				name = users.get(i).name();
 				users.remove(i);
-				if(status)
+				if(status){
 					sendToAll("/m/"+name+" has logged out.");
-				else
+				} else {
 					sendToAll("/m/"+name+" has timed out.");
-
+				}
 				return;
 			}
 		}

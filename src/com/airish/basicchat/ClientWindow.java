@@ -179,8 +179,9 @@ public class ClientWindow extends JFrame implements Runnable{
 						client.setID(Integer.parseInt(message.substring(3)));
 					} else if(message.startsWith("/m/")){
 						displayMessage(message.substring(3));
+					} else if(message.startsWith("/i/")){ // Ping request
+						client.send(("/i/"+client.ID()).getBytes());
 					}
-
 				}
 			}
 		};
