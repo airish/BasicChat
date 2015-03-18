@@ -94,7 +94,7 @@ public class ClientWindow extends JFrame implements Runnable{
 		// Send text message to console when send button is hit
 		btnSend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayMessage();
+				sendMessage();
 			}
 		});
 		
@@ -105,7 +105,7 @@ public class ClientWindow extends JFrame implements Runnable{
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER){
-					displayMessage();
+					sendMessage();
 				}
 			}
 		});
@@ -144,27 +144,29 @@ public class ClientWindow extends JFrame implements Runnable{
 
 	/**
 	 *  Displays a message on the textArea of the client window.
-	 *  If no strings are passed to the method, then text will be sent
-	 *  from the User's textField. This generalized function can be used by
-	 *  either the User or the program itself.
 	 * @param strings
 	 */
 	public void displayMessage(String...strings){
-		if(strings.length == 0){
-			String message = txtMessage.getText();
-			if(message.equals("")) return;
-			
-			message = client.name()+": "+message;
-			client.send(("/m/"+message).getBytes());
-			txtMessage.setText("");
-			txtMessage.requestFocusInWindow();
-		}
-		else {
-			for(int i = 0; i < strings.length; i++){
-				txtrHistory.append(strings[i]+"\n");
-			}
+		for(int i = 0; i < strings.length; i++){
+			txtrHistory.append(strings[i]+"\n");
 		}
 		txtrHistory.setCaretPosition(txtrHistory.getDocument().getLength());
+	}
+	
+	/**
+	 * Send text from the user's JTextField. Empty strings are not valid, and
+	 * will not be sent.
+	 */
+	public void sendMessage(){
+		String message = txtMessage.getText();
+		if(message.equals("")) return;
+		
+		message = client.name()+": "+message;
+		client.send(("/m/"+message).getBytes());
+		txtMessage.setText("");
+		txtMessage.requestFocusInWindow();
+		
+	//	txtrHistory.setCaretPosition(txtrHistory.getDocument().getLength());
 	}
 	
 	public void listen(){
