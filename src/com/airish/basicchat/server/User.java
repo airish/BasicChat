@@ -13,13 +13,14 @@ public class User {
 	private int port;
 	private final int ID;
 	
-	private int attempts = 0;
+	private int attempts;;
 	
 	public User(String name, InetAddress address, int port,  int ID){
 		this.name = name;
 		this.address = address;
 		this.port = port;
 		this.ID = ID;
+		this.attempts = 0;
 	}
 	
 	public String name(){
@@ -44,5 +45,9 @@ public class User {
 	
 	public void incrementAttempts(){
 		attempts++;
+	}
+	
+	public void resetAttempts(){
+		attempts = 0;
 	}
 }

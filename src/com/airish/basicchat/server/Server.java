@@ -13,6 +13,7 @@ public class Server implements Runnable{
 	
 	
 	private List<User> users = new ArrayList<User>();
+	private List<Integer> userResponses = new ArrayList<Integer>(); // TODO: Change to dictionary?
 	private DatagramSocket socket;
 	private int port;
 	private boolean running = false;
@@ -21,6 +22,8 @@ public class Server implements Runnable{
 	private Thread manage;
     private Thread send;
     private Thread receive;
+    
+    private final int MAX_ATTEMPTS = 5;
 	
 	public Server(int port){
 		this.port = port;
@@ -42,11 +45,30 @@ public class Server implements Runnable{
 		receive();
 	}
 	
+	
 	public void manageClients(){
 		manage = new Thread("Manage"){
 			public void run(){
 				while(running){
-					
+					sendToAll("/i/server");
+					// Wait two seconds for responses
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					for(int i = 0; i < users.size(); i++){
+						User u = users.get(i);
+						if(!userResponses.contains(users.get(i).ID())){
+							u.incrementAttempts();
+							if(u.attempts() >= MAX_ATTEMPTS){
+								disconnect(u.ID(), false);
+							}
+						} else {
+							userResponses.remove(new Integer(u.ID()));
+							u.resetAttempts();
+						}
+					}
 				}	
 			}
 		};
@@ -73,8 +95,8 @@ public class Server implements Runnable{
 	}
 	
 	private void sendToAll(String message){
-		for(User u : users){
-			send(message.getBytes(), u.address(), u.port());
+		for(int i = 0; i < users.size(); i++){
+			send(message.getBytes(), users.get(i).address(), users.get(i).port());
 		}
 	}
 	
@@ -98,7 +120,7 @@ public class Server implements Runnable{
 	
 	public void processPacket(DatagramPacket packet){
 		String packetData = new String(packet.getData()).trim();
-		System.out.println("Packet test: "+packetData);
+		System.out.println("Packet: "+packetData);
 		if(packetData.startsWith("/c/")){ // Connection packet
 			int id = UniqueIdentifier.getIdentifier();
 			String name = packetData.substring(3,packetData.length());
@@ -108,17 +130,18 @@ public class Server implements Runnable{
 						id)
 			);
 			String m = "/c/" + id;
-			System.out.println(m);
+			System.out.println(name+" has connected to the server as user # "+id);
 			send(m.getBytes(), packet.getAddress(), packet.getPort());
 			sendToAll("/m/"+name+" has connected to the server.");
 		} else if(packetData.startsWith("/m/")){ // Message packet
 			sendToAll(packetData);
-			System.out.println(packetData);
 		} else if(packetData.startsWith("/d/")){ // Disconnection packet
 			System.out.println("User disconnecting");
 			boolean status = packetData.substring(3,4).equals("t");
 			String id = packetData.substring(5);
 			disconnect(Integer.parseInt(id), status);
+		} else if(packetData.startsWith("/i/")){ // Ping response packet
+			userResponses.add(Integer.parseInt(packetData.substring(3))); 
 		} else {
 			System.out.println(packetData);
 		}

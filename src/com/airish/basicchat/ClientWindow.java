@@ -155,14 +155,13 @@ public class ClientWindow extends JFrame implements Runnable{
 			if(message.equals("")) return;
 			
 			message = client.name()+": "+message;
-		//	txtrHistory.append(message+"\n");
 			client.send(("/m/"+message).getBytes());
 			txtMessage.setText("");
 			txtMessage.requestFocusInWindow();
 		}
 		else {
-			for(String s : strings){
-				txtrHistory.append(s+"\n");
+			for(int i = 0; i < strings.length; i++){
+				txtrHistory.append(strings[i]+"\n");
 			}
 		}
 		txtrHistory.setCaretPosition(txtrHistory.getDocument().getLength());
