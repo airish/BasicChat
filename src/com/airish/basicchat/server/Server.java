@@ -56,10 +56,9 @@ public class Server implements Runnable{
 		Scanner scanner = new Scanner(System.in);
 		while(running){
 			String text = scanner.nextLine();
-			if(!text.startsWith("/")){
+			if(!text.startsWith("/")){ // Send a message to the users
 				sendToAll("/m/Server: "+text);
-			}
-			if(text.startsWith("/kick/")){
+			} else if(text.startsWith("/kick/")){ // Kick a user from the server
 				int id = Integer.parseInt(text.substring(6));
 				User u = userMap.get(id);
 				disconnect(id, false);
@@ -67,6 +66,12 @@ public class Server implements Runnable{
 				send("/k/Server has terminated your connection".getBytes(), 
 						u.address(),
 						u.port());
+			} else if(text.startsWith("/users")){ // Print out all user information
+				for(int i = 0; i < users.size(); i++){
+					User u = users.get(i);
+					System.out.println("User "+u.ID()+" Name: "+u.name()
+							+", Address: "+u.address()+", Port: "+u.port());
+				}
 			}
 
 		}

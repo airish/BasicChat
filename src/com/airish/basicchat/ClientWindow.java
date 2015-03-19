@@ -184,6 +184,7 @@ public class ClientWindow extends JFrame implements Runnable{
 					} else if(message.startsWith("/i/")){ // Ping request
 						client.send(("/i/"+client.ID()).getBytes());
 					} else if(message.startsWith("/k/")){ // Server is kicking client
+						System.out.println("Client has been kicked from the server");
 						displayMessage(message.substring(3));
 						running = false;
 					}
@@ -197,6 +198,7 @@ public class ClientWindow extends JFrame implements Runnable{
 	public void run(){
 		listen();
 		if(!running){
+			System.out.println("Closing clent");
 			client.close();
 		}
 	}
