@@ -6,13 +6,21 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 // TODO convert to TCP, use server authentication
+// TODO: add server history of last 50 things said, to be sent to user when
+// logging in
+
+// TODO: Have the server maintain a log, and output that log as a text file
+// at regular intervals, or when shutting down the server
 public class Server implements Runnable{
 	
 	
 	private List<User> users = new ArrayList<User>();
+	private HashMap<Integer, User> userMap = new HashMap<Integer, User>();
 	private List<Integer> userResponses = new ArrayList<Integer>(); // TODO: Change to dictionary?
 	private DatagramSocket socket;
 	private int port;
@@ -43,6 +51,26 @@ public class Server implements Runnable{
 		System.out.println("Server started on port "+port);
 		manageClients();
 		receive();
+		
+		// Take in console input
+		Scanner scanner = new Scanner(System.in);
+		while(running){
+			String text = scanner.nextLine();
+			if(!text.startsWith("/")){
+				sendToAll("/m/Server: "+text);
+			}
+			if(text.startsWith("/kick/")){
+				int id = Integer.parseInt(text.substring(6));
+				User u = userMap.get(id);
+				disconnect(id, false);
+				
+				send("/k/Server has terminated your connection".getBytes(), 
+						u.address(),
+						u.port());
+			}
+
+		}
+	
 	}
 	
 	
@@ -97,6 +125,8 @@ public class Server implements Runnable{
 	}
 	
 	private void sendToAll(String message){
+		
+		System.out.println(message.trim());
 		for(int i = 0; i < users.size(); i++){
 			send(message.getBytes(), users.get(i).address(), users.get(i).port());
 		}
@@ -126,11 +156,12 @@ public class Server implements Runnable{
 		if(packetData.startsWith("/c/")){ // Connection packet
 			int id = UniqueIdentifier.getIdentifier();
 			String name = packetData.substring(3,packetData.length());
-			users.add(new User(name,
-						packet.getAddress(),
-						packet.getPort(), 
-						id)
-			);
+			User newUser =new User(name,
+									packet.getAddress(),
+									packet.getPort(), 
+									id);
+			users.add(newUser);
+			userMap.put(id, newUser);
 			String m = "/c/" + id;
 			System.out.println(name+" has connected to the server as user # "+id);
 			send(m.getBytes(), packet.getAddress(), packet.getPort());
@@ -157,10 +188,11 @@ public class Server implements Runnable{
 			if(users.get(i).ID() == id){
 				name = users.get(i).name();
 				users.remove(i);
+				userMap.remove(id);
 				if(status){
 					sendToAll("/m/"+name+" has logged out.");
 				} else {
-					sendToAll("/m/"+name+" has timed out.");
+					sendToAll("/m/"+name+" has been disconnected.");
 				}
 				return;
 			}

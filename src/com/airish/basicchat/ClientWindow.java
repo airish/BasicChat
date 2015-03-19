@@ -159,7 +159,7 @@ public class ClientWindow extends JFrame implements Runnable{
 	 */
 	public void sendMessage(){
 		String message = txtMessage.getText();
-		if(message.equals("")) return;
+		if(!running || message.equals("")) return;
 		
 		message = client.name()+": "+message;
 		client.send(("/m/"+message).getBytes());
@@ -183,6 +183,9 @@ public class ClientWindow extends JFrame implements Runnable{
 						displayMessage(message.substring(3));
 					} else if(message.startsWith("/i/")){ // Ping request
 						client.send(("/i/"+client.ID()).getBytes());
+					} else if(message.startsWith("/k/")){ // Server is kicking client
+						displayMessage(message.substring(3));
+						running = false;
 					}
 				}
 			}
