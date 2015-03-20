@@ -18,13 +18,14 @@ import java.util.Scanner;
 // at regular intervals, or when shutting down the server
 public class Server implements Runnable{
 	
-	
 	private List<User> users = new ArrayList<User>();
 	private HashMap<Integer, User> userMap = new HashMap<Integer, User>();
 	private List<Integer> userResponses = new ArrayList<Integer>(); // TODO: Change to dictionary?
 	private DatagramSocket socket;
 	private int port;
 	private boolean running = false;
+	
+	private List<String> log = new ArrayList<String>();
 	
 	private Thread run;
 	private Thread manage;
@@ -65,7 +66,9 @@ public class Server implements Runnable{
 				
 				send("/k/Server has terminated your connection".getBytes(), 
 						u.address(),
-						u.port());
+						u.port()
+				);
+				
 			} else if(text.startsWith("/users")){ // Print out all user information
 				for(int i = 0; i < users.size(); i++){
 					User u = users.get(i);
@@ -76,6 +79,7 @@ public class Server implements Runnable{
 
 		}
 	
+		scanner.close();
 	}
 	
 	
@@ -131,6 +135,14 @@ public class Server implements Runnable{
 	
 	private void sendToAll(String message){
 		
+		// Add message to server log
+		if(message.startsWith("/m/")){
+			if(log.size() == 25){
+				log.remove(0);
+			}
+			log.add(message);
+		}
+		
 		System.out.println(message.trim());
 		for(int i = 0; i < users.size(); i++){
 			send(message.getBytes(), users.get(i).address(), users.get(i).port());
@@ -170,6 +182,12 @@ public class Server implements Runnable{
 			String m = "/c/" + id;
 			System.out.println(name+" has connected to the server as user # "+id);
 			send(m.getBytes(), packet.getAddress(), packet.getPort());
+			
+			// Send the log to the new user.
+			for(String l : log){
+				send(l.getBytes(), packet.getAddress(), packet.getPort());
+			}
+			
 			sendToAll("/m/"+name+" has connected to the server.");
 		} else if(packetData.startsWith("/m/")){ // Message packet
 			sendToAll(packetData);
