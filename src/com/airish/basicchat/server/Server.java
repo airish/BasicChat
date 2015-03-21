@@ -10,21 +10,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-// TODO convert to TCP, use server authentication
-// TODO: add server history of last 50 things said, to be sent to user when
-// logging in
-
+// TODO: convert to TCP, use server authentication
 // TODO: Have the server maintain a log, and output that log as a text file
 // at regular intervals, or when shutting down the server
+// TODO: permabans?
+// TODO: List the currently logged in users on the client window
+// TODO: Private Messages
+// TODO: Unique names, e.g. can't have two logged in users with same name
+// TODO: Sanitize login input, e.g. don't allow "" as a valid username
+
 public class Server implements Runnable{
 	
 	private List<User> users = new ArrayList<User>();
 	private HashMap<Integer, User> userMap = new HashMap<Integer, User>();
-	private List<Integer> userResponses = new ArrayList<Integer>(); // TODO: Change to dictionary?
+	private List<Integer> userResponses = new ArrayList<Integer>();
 	private DatagramSocket socket;
 	private int port;
 	private boolean running = false;
 	
+	// Temporary log of past 25 messages sent to users
 	private List<String> log = new ArrayList<String>();
 	
 	private Thread run;
@@ -33,6 +37,12 @@ public class Server implements Runnable{
     private Thread receive;
     
     private final int MAX_ATTEMPTS = 5;
+    
+    private enum Disconnection {
+    	LOGOUT,
+    	TIMEOUT,
+    	KICKOUT
+    }
 	
 	public Server(int port){
 		this.port = port;
@@ -62,7 +72,7 @@ public class Server implements Runnable{
 			} else if(text.startsWith("/kick/")){ // Kick a user from the server
 				int id = Integer.parseInt(text.substring(6));
 				User u = userMap.get(id);
-				disconnect(id, false);
+				disconnect(id, Disconnection.KICKOUT);
 				
 				send("/k/Server has terminated your connection".getBytes(), 
 						u.address(),
@@ -99,7 +109,7 @@ public class Server implements Runnable{
 						if(!userResponses.contains(users.get(i).ID())){
 							System.out.println("No response");
 							if(u.attempts() >= MAX_ATTEMPTS){
-								disconnect(u.ID(), false);
+								disconnect(u.ID(), Disconnection.TIMEOUT);
 							} else {
 								u.incrementAttempts();
 							}
@@ -193,9 +203,8 @@ public class Server implements Runnable{
 			sendToAll(packetData);
 		} else if(packetData.startsWith("/d/")){ // Disconnection packet
 			System.out.println("User disconnecting");
-			boolean status = packetData.substring(3,4).equals("t");
 			String id = packetData.substring(5);
-			disconnect(Integer.parseInt(id), status);
+			disconnect(Integer.parseInt(id), Disconnection.LOGOUT);
 		} else if(packetData.startsWith("/i/")){ // Ping response packet
 			userResponses.add(Integer.parseInt(packetData.substring(3))); 
 		} else {
@@ -204,21 +213,25 @@ public class Server implements Runnable{
 	}
 
 	
-	private void disconnect(int id, boolean status){
+	private void disconnect(int id, Disconnection status){
 		System.out.println("Disconnect "+id);
-		String name;
-		for(int i = 0; i < users.size(); i++){
-			if(users.get(i).ID() == id){
-				name = users.get(i).name();
-				users.remove(i);
-				userMap.remove(id);
-				if(status){
-					sendToAll("/m/"+name+" has logged out.");
-				} else {
-					sendToAll("/m/"+name+" has been disconnected.");
-				}
-				return;
-			}
+		
+		User u = userMap.get(id);
+		String name = u.name();
+		users.remove(id);
+		userMap.remove(id);
+		
+		switch(status){
+		case LOGOUT:
+			sendToAll("/m/"+name+" has logged out.");
+			break;
+		case TIMEOUT:
+			sendToAll("/m/"+name+" has timed out.");
+			break;
+		case KICKOUT:
+			sendToAll("/m/"+name+" has been kicked.");
+			break;
 		}
+		
 	}
 }
