@@ -133,7 +133,8 @@ public class ClientWindow extends JFrame implements Runnable{
 				String disconnect = "/d/t/"+client.ID();
 				System.out.println(disconnect);
 				
-				client.send(disconnect.getBytes());
+				if(running)
+					client.send(disconnect.getBytes());
 				running = false;
 			}
 		});

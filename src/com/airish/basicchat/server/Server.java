@@ -216,8 +216,13 @@ public class Server implements Runnable{
 	private void disconnect(int id, Disconnection status){
 		System.out.println("Disconnect "+id);
 		
+		boolean exists = true;
+		String name = "";
+		
 		User u = userMap.get(id);
-		String name = u.name();
+		name = u.name();
+		exists = false;
+		
 		users.remove(id);
 		userMap.remove(id);
 		
