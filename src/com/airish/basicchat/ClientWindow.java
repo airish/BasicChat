@@ -65,8 +65,6 @@ public class ClientWindow extends JFrame implements Runnable{
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{5,560, 30, 5};
 		gbl_contentPane.rowHeights = new int[]{50, 340, 10};
-		gbl_contentPane.columnWeights = new double[]{0.0, 1.0};
-		gbl_contentPane.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
 		txtrHistory = new JTextArea();
@@ -86,6 +84,8 @@ public class ClientWindow extends JFrame implements Runnable{
 		scrollConstraints.gridy = 0;
 		scrollConstraints.gridwidth = 3;
 		scrollConstraints.gridheight = 2;
+		scrollConstraints.weightx = 1;
+		scrollConstraints.weighty = 1;
 		contentPane.add(scroll, scrollConstraints);
 		
 		// Create the send button.
@@ -117,6 +117,8 @@ public class ClientWindow extends JFrame implements Runnable{
 		gbc_txtMessage.gridx = 0;
 		gbc_txtMessage.gridy = 2;
 		gbc_txtMessage.gridwidth = 2;
+		gbc_txtMessage.weightx = 1;
+		gbc_txtMessage.weighty = 0;
 		contentPane.add(txtMessage, gbc_txtMessage);
 		txtMessage.setColumns(10);
 		
@@ -125,6 +127,8 @@ public class ClientWindow extends JFrame implements Runnable{
 		gbc_btnSend.gridx = 2;
 		gbc_btnSend.gridy = 2;
 		contentPane.add(btnSend, gbc_btnSend);
+		gbc_btnSend.weightx = 0;
+		gbc_btnSend.weighty = 0;
 		
 		// Listen for close button, and disconnect the user
 		addWindowListener(new WindowAdapter() {
